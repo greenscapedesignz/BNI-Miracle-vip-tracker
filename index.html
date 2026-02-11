@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 35px;
+      padding-bottom: 25px;
+      border-bottom: 3px solid #c8102e;
+    }
+
+    .logo-text {
+      color: #c8102e;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      color: #555;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .meeting-date-badge {
+      background: #c8102e;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .loading-message {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-style: italic;
+    }
+
+    .error-message {
+      background: #fee;
+      border-left: 4px solid #c8102e;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      color: #c8102e;
+    }
+
+    .presenter-info {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      border-left: 4px solid #c8102e;
+    }
+
+    .form-section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      margin-top: 5px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #c8102e;
+    }
+
+    input[readonly] {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      background: linear-gradient(135deg, #c8102e 0%, #a00d25 100%);
+      color: white;
+      border: none;
+      padding: 16px;
+      margin-top: 30px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(200, 16, 46, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .required::after {
+      content: " *";
+      color: #c8102e;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px;
+      }
+
+      .logo-text {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo-text">BNI VIP TRACKER</div>
+    <div class="subtitle">Support Our Upcoming Presenters</div>
+  </div>
+
+  <div id="loadingMessage" class="loading-message">Loading presenters...</div>
+  <div id="errorMessage" class="error-message" style="display:none;"></div>
+
+  <div id="mainForm" style="display:none;">
+    
+    <div class="meeting-date-badge" id="meetingDateBadge">
+      📅 Meeting Date: <span id="meetingDate"></span>
+    </div>
+
+    <div class="presenter-info">
+      <label>Select Presenter</label>
+      <select id="presenterDropdown"></select>
+
+      <label style="margin-top: 15px;">Business</label>
+      <input type="text" id="businessField" readonly>
+
+      <label style="margin-top: 15px;">Contact</label>
+      <input type="text" id="contactField" readonly>
+    </div>
+
+    <form id="vipForm">
+
+      <input type="hidden" name="presenter_name">
+      <input type="hidden" name="presenter_business">
+      <input type="hidden" name="presenter_contact">
+      <input type="hidden" name="presenter_date">
+
+      <div class="section-title">Your Information</div>
+
+      <label class="required">Your Name</label>
+      <input type="text" name="member_name" required placeholder="Enter your name">
+
+      <label class="required">Your Role</label>
+      <select name="role" required>
+        <option value="">-- Select Role --</option>
+        <option value="Member">Member</option>
+        <option value="Visitor">Visitor</option>
+      </select>
+
+      <div class="section-title" style="margin-top: 35px;">VIP Details</div>
+
+      <label>Prospect Name</label>
+      <input type="text" name="prospect_name" placeholder="Who are you referring?">
+
+      <label>Industry</label>
+      <input type="text" name="industry" placeholder="What industry are they in?">
+
+      <label>Location</label>
+      <input type="text" name="location" placeholder="City or area">
+
+      <label>Connection Type</label>
+      <select name="connection_type">
+        <option value="">-- Select --</option>
+        <option value="Client">Client</option>
+        <option value="Friend">Friend</option>
+        <option value="Business Contact">Business Contact</option>
+        <option value="Family">Family</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label>Comfort Level (1-5)</label>
+      <select name="comfort_level">
+        <option value="">-- Select --</option>
+        <option value="1">1 - Just Met</option>
+        <option value="2">2 - Acquaintance</option>
+        <option value="3">3 - Know Well</option>
+        <option value="4">4 - Good Friend</option>
+        <option value="5">5 - Very Close</option>
+      </select>
+
+      <label>Support Type</label>
+      <select name="support_type">
+        <option value="">-- Select --</option>
+        <option value="Direct Introduction">Direct Introduction</option>
+        <option value="WhatsApp Connect">WhatsApp Connect</option>
+        <option value="Invite as Visitor">Invite as Visitor</option>
+        <option value="Share Presentation">Share Presentation</option>
+        <option value="Just Informing">Just Informing</option>
+      </select>
+
+      <label>Who will follow up?</label>
+      <select name="followup_owner">
+        <option value="">-- Select --</option>
+        <option value="I will follow up">I will follow up</option>
+        <option value="Presenter can follow up">Presenter can follow up</option>
+        <option value="Both">Both</option>
+      </select>
+
+      <label>Additional Notes</label>
+      <textarea name="notes" placeholder="Any additional information..."></textarea>
+
+      <button type="submit" id="submitBtn">Submit VIP</button>
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+
+let presenterData = [];
+
+// Load presenters on page load
+google.script.run
+  .withSuccessHandler(handlePresentersLoaded)
+  .withFailureHandler(handleLoadError)
+  .getUpcomingPresenters();
+
+function handlePresentersLoaded(data) {
+  const loadingMsg = document.getElementById("loadingMessage");
+  const mainForm = document.getElementById("mainForm");
+  const errorMsg = document.getElementById("errorMessage");
+
+  loadingMsg.style.display = "none";
+
+  if (!data || data.length === 0) {
+    errorMsg.textContent = "No presenters scheduled for the upcoming Wednesday. Please check back later.";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  presenterData = data;
+  const dropdown = document.getElementById("presenterDropdown");
+
+  // Display the meeting date
+  if (data.length > 0) {
+    const meetingDate = new Date(data[0].date);
+    const formattedDate = meetingDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    document.getElementById("meetingDate").textContent = formattedDate;
+  }
+
+  data.forEach((p, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = p.name;
+    dropdown.appendChild(option);
+  });
+
+  updatePresenterFields(0);
+  mainForm.style.display = "block";
+}
+
+function handleLoadError(error) {
+  const loadingMsg = document.getElementById("loadingMessage");
+  const errorMsg = document.getElementById("errorMessage");
+
+  loadingMsg.style.display = "none";
+  errorMsg.textContent = "Error loading presenters: " + error.message;
+  errorMsg.style.display = "block";
+}
+
+function updatePresenterFields(index) {
+  const p = presenterData[index];
+
+  document.getElementById("businessField").value = p.business;
+  document.getElementById("contactField").value = p.contact;
+  document.querySelector("[name='presenter_name']").value = p.name;
+  document.querySelector("[name='presenter_business']").value = p.business;
+  document.querySelector("[name='presenter_contact']").value = p.contact;
+  document.querySelector("[name='presenter_date']").value = p.date;
+}
+
+document.getElementById("presenterDropdown").addEventListener("change", function() {
+  updatePresenterFields(this.value);
+});
+
+document.getElementById("vipForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  const formData = Object.fromEntries(new FormData(this));
+
+  google.script.run
+    .withSuccessHandler(handleSubmitSuccess)
+    .withFailureHandler(handleSubmitError)
+    .submitVIP(formData);
+});
+
+function handleSubmitSuccess(response) {
+  const submitBtn = document.getElementById("submitBtn");
+  
+  alert("✓ VIP Recorded Successfully!\n\nThank you for supporting our presenters.");
+  document.getElementById("vipForm").reset();
+  
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Submit VIP";
+}
+
+function handleSubmitError(error) {
+  const submitBtn = document.getElementById("submitBtn");
+  
+  alert("Error: Failed to submit VIP.\n\n" + error.message);
+  
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Submit VIP";
+}
+
+</script>
+
+</body>
+</html>
